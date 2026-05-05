@@ -9,6 +9,7 @@ import {
   SHARE_VERTEX_PARAM,
   encodeFragment,
 } from '@/lib/encode-share';
+import { recordCanvasToGif, triggerGifDownload } from '@/lib/record-gif';
 import { buildSnippetHtml } from '@/lib/snippet-export';
 import { defaultUniformValues } from '@/shaders/types';
 import type { TutorialStep, UniformDef, UniformValues } from '@/shaders/types';
@@ -51,6 +52,10 @@ export function LivePlayground({
   const [isPending, startTransition] = useTransition();
   const [shareState, setShareState] = useState<ShareState>('idle');
   const shareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
+  const recordAbortRef = useRef<AbortController | null>(null);
+  const [recordState, setRecordState] = useState<{ phase: 'idle' | 'recording' | 'encoding' | 'error'; captured?: number; total?: number; message?: string }>({ phase: 'idle' });
 
   const hasTutorial = !!tutorial && tutorial.length > 0;
   const [tutorialOpen, setTutorialOpen] = useState(false);
@@ -126,6 +131,55 @@ export function LivePlayground({
     }
   }
 
+  async function handleRecord() {
+    if (typeof window === 'undefined') return;
+    if (recordState.phase === 'recording' || recordState.phase === 'encoding') {
+      recordAbortRef.current?.abort();
+      return;
+    }
+
+    const canvas = canvasWrapperRef.current?.querySelector('canvas') ?? null;
+    if (!canvas) {
+      setRecordState({ phase: 'error', message: 'canvas not ready' });
+      return;
+    }
+
+    const DURATION_MS = 3000;
+    const FPS = 24;
+    const TARGET = 480;
+    const ratio = canvas.width && canvas.height ? canvas.height / canvas.width : 1;
+    const width = TARGET;
+    const height = Math.max(1, Math.round(TARGET * ratio));
+
+    const controller = new AbortController();
+    recordAbortRef.current = controller;
+    setRecordState({ phase: 'recording', captured: 0, total: Math.round((DURATION_MS / 1000) * FPS) });
+
+    try {
+      const bytes = await recordCanvasToGif({
+        source: canvas,
+        width,
+        height,
+        fps: FPS,
+        durationMs: DURATION_MS,
+        signal: controller.signal,
+        onProgress: (captured, total) => {
+          setRecordState({ phase: captured === total ? 'encoding' : 'recording', captured, total });
+        },
+      });
+      triggerGifDownload(bytes, slug);
+      setRecordState({ phase: 'idle' });
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') {
+        setRecordState({ phase: 'idle' });
+      } else {
+        setRecordState({ phase: 'error', message: (err as Error).message });
+      }
+    } finally {
+      recordAbortRef.current = null;
+    }
+  }
+
   function handleTutorialToggle() {
     setTutorialOpen((open) => {
       const next = !open;
@@ -177,7 +231,10 @@ export function LivePlayground({
   return (
     <section className="flex flex-col gap-4">
       <div className="grid gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        <div className="aspect-square overflow-hidden rounded-3xl border border-white/10 bg-bg-panel shadow-glow lg:aspect-auto">
+        <div
+          ref={canvasWrapperRef}
+          className="aspect-square overflow-hidden rounded-3xl border border-white/10 bg-bg-panel shadow-glow lg:aspect-auto"
+        >
           <SceneCanvasMount
             className="h-full w-full"
             vertexShader={compiledVertex}
@@ -248,6 +305,27 @@ export function LivePlayground({
                 title="Download a self-contained .html embed of this shader"
               >
                 export html
+              </button>
+              <button
+                type="button"
+                onClick={handleRecord}
+                className={
+                  'rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.25em] transition ' +
+                  (recordState.phase === 'recording' || recordState.phase === 'encoding'
+                    ? 'border-rose-400/70 bg-rose-500/15 text-rose-100 hover:bg-rose-500/25'
+                    : recordState.phase === 'error'
+                      ? 'border-rose-500/40 text-rose-200 hover:border-rose-400/70'
+                      : 'border-white/10 text-ink-dim hover:border-accent/50 hover:text-ink')
+                }
+                title="Record a 3 second GIF of the live canvas"
+              >
+                {recordState.phase === 'recording'
+                  ? `rec ${recordState.captured ?? 0}/${recordState.total ?? 0} · cancel`
+                  : recordState.phase === 'encoding'
+                    ? 'encoding gif…'
+                    : recordState.phase === 'error'
+                      ? 'rec failed · retry'
+                      : 'record gif'}
               </button>
               <button
                 type="button"

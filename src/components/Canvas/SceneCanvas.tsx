@@ -27,7 +27,7 @@ export function SceneCanvas({
       className={className}
       dpr={[1, 2]}
       camera={{ position: [0, 0, 1], fov: 50 }}
-      gl={{ antialias: true, preserveDrawingBuffer: false }}
+      gl={{ antialias: true, preserveDrawingBuffer: true }}
     >
       <ShaderPlane
         vertexShader={vertexShader}
