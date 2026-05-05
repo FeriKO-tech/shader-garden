@@ -37,6 +37,7 @@ export function ShaderPlane({ vertexShader, fragmentShader }: ShaderPlaneProps) 
     <mesh scale={[viewport.width, viewport.height, 1]}>
       <planeGeometry args={[1, 1]} />
       <shaderMaterial
+        key={`${vertexShader.length}:${fragmentShader.length}:${vertexShader}:${fragmentShader}`}
         ref={matRef}
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
