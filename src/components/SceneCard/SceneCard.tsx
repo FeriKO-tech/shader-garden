@@ -1,18 +1,31 @@
 import Link from 'next/link';
 
 import { SceneCanvasMount } from '@/components/Canvas/SceneCanvasMount';
+import { LikeButton } from '@/components/Likes/LikeButton';
 import type { SceneMeta } from '@/shaders/registry';
 
 type SceneCardProps = {
   scene: SceneMeta;
+  featured?: boolean;
 };
 
-export function SceneCard({ scene }: SceneCardProps) {
+export function SceneCard({ scene, featured }: SceneCardProps) {
   return (
     <Link
       href={`/scene/${scene.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-bg-panel transition hover:border-accent/40 hover:shadow-glow"
+      className={
+        'group relative flex flex-col overflow-hidden rounded-2xl border bg-bg-panel transition ' +
+        (featured
+          ? 'border-accent/40 shadow-glow hover:border-accent/60'
+          : 'border-white/10 hover:border-accent/40 hover:shadow-glow')
+      }
     >
+      {featured ? (
+        <span className="absolute left-3 top-3 z-10 rounded-full border border-accent/40 bg-bg/70 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.3em] text-accent backdrop-blur">
+          featured
+        </span>
+      ) : null}
+
       <div className="aspect-square w-full overflow-hidden bg-bg-soft">
         <SceneCanvasMount
           className="h-full w-full"
@@ -30,9 +43,12 @@ export function SceneCard({ scene }: SceneCardProps) {
           </span>
         </div>
         <p className="text-sm leading-snug text-ink-dim">{scene.description}</p>
-        <span className="mt-2 inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.2em] text-accent/80 transition group-hover:text-accent">
-          open editor →
-        </span>
+        <div className="mt-2 flex items-center justify-between">
+          <span className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.2em] text-accent/80 transition group-hover:text-accent">
+            open editor →
+          </span>
+          <LikeButton slug={scene.slug} size="sm" stopPropagation />
+        </div>
       </div>
     </Link>
   );

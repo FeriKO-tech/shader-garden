@@ -1,4 +1,4 @@
-import { SceneCard } from '@/components/SceneCard/SceneCard';
+import { GalleryGrid } from '@/components/Gallery/GalleryGrid';
 import { scenes } from '@/shaders/registry';
 
 export default function HomePage() {
@@ -20,11 +20,7 @@ export default function HomePage() {
           <span className="font-mono text-xs text-ink-faint">{scenes.length} scenes</span>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {scenes.map((scene) => (
-            <SceneCard key={scene.slug} scene={scene} />
-          ))}
-        </div>
+        <GalleryGrid scenes={scenes} />
       </section>
     </main>
   );

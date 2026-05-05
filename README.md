@@ -81,13 +81,13 @@ sliders / color pickers underneath the live playground. Built-in uniforms
 - [x] Tutorial mode that walks through a shader line-by-line
 - [x] Record the live canvas as an animated GIF
 - [x] User accounts (Firebase Auth) + saved forks
-- [ ] Likes and featured scenes
+- [x] Likes and featured scenes (Firestore)
 
-## Firebase (optional — sign-in + saved forks)
+## Firebase (optional — sign-in, saved forks, likes, featured)
 
 If the `NEXT_PUBLIC_FIREBASE_*` env vars are missing, the site still works;
-the auth widget shows `auth: off` and the save-fork button simply never appears.
-To turn it on:
+the auth widget shows `auth: off`, the save-fork button and the like buttons
+disappear, and the gallery falls back to a static featured list. To turn it on:
 
 1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com/).
 2. Enable **Authentication → Google** as a sign-in provider.
@@ -97,18 +97,45 @@ To turn it on:
    values.
 6. Add your deploy domain to **Authentication → Settings → Authorized domains**.
 
-Minimal Firestore security rules (paste into **Firestore → Rules**):
+### Firestore layout
+
+- `forks/{autoId}` — `{ uid, slug, title, vertex, fragment, uniformValues, createdAt }`
+- `likes/{slug}_{uid}` — `{ uid, slug, createdAt }` (one doc per user × scene)
+- `featured/scenes` — `{ slugs: string[] }`; curators edit this doc in the console
+  to pin scenes to the top of the gallery.
+
+### Security rules
+
+Paste into **Firestore → Rules**:
 
 ```text
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // Saved forks: owner CRUD, public read.
     match /forks/{fork} {
       allow read: if true;
       allow create: if request.auth != null
                     && request.resource.data.uid == request.auth.uid;
       allow update, delete: if request.auth != null
                             && resource.data.uid == request.auth.uid;
+    }
+
+    // Likes: public read/count, owner write. Doc id must be `${slug}_${uid}`.
+    match /likes/{likeId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid
+                    && likeId == request.resource.data.slug + '_' + request.auth.uid;
+      allow delete: if request.auth != null
+                    && resource.data.uid == request.auth.uid;
+    }
+
+    // Featured config: public read, admin-only write (edit via console).
+    match /featured/{docId} {
+      allow read: if true;
+      allow write: if false;
     }
   }
 }

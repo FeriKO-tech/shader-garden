@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { LikeButton } from '@/components/Likes/LikeButton';
 import { LivePlayground } from '@/components/Playground/LivePlayground';
 import {
   SHARE_FRAGMENT_PARAM,
@@ -55,9 +56,12 @@ export default function ScenePage({ params, searchParams }: ScenePageProps) {
         {isFork ? <span className="text-accent/80">· fork</span> : null}
       </nav>
 
-      <header>
-        <h1 className="text-4xl font-semibold tracking-tight text-ink lg:text-5xl">{scene.title}</h1>
-        <p className="mt-3 max-w-2xl text-base text-ink-dim">{scene.description}</p>
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-semibold tracking-tight text-ink lg:text-5xl">{scene.title}</h1>
+          <p className="mt-3 max-w-2xl text-base text-ink-dim">{scene.description}</p>
+        </div>
+        <LikeButton slug={scene.slug} />
       </header>
 
       <LivePlayground
