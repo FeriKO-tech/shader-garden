@@ -2,6 +2,7 @@ import { cloudsMeta } from './clouds/meta';
 import { fireMeta } from './fire/meta';
 import { galaxyMeta } from './galaxy/meta';
 import { glitchMeta } from './glitch/meta';
+import { hologramMeta } from './hologram/meta';
 import { plasmaMeta } from './plasma/meta';
 import { raymarchMeta } from './raymarch/meta';
 import { voronoiMeta } from './voronoi/meta';
@@ -23,6 +24,7 @@ export const scenes: SceneMeta[] = [
   galaxyMeta,
   voronoiMeta,
   raymarchMeta,
+  hologramMeta,
   glitchMeta,
 ];
 
