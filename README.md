@@ -40,7 +40,7 @@ Then open [http://localhost:3000](http://localhost:3000).
 - [x] Monaco editor with GLSL syntax
 - [x] Live recompile on edit
 - [x] Gallery page with scene cards
-- [ ] Share via URL
+- [x] Share via URL
 
 ## License
 
