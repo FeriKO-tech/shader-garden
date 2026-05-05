@@ -36,7 +36,7 @@ Then open [http://localhost:3000](http://localhost:3000).
 ## Roadmap
 
 - [x] Basic R3F canvas
-- [ ] Load fragment shader from `.glsl` file
+- [x] Load fragment shader from `.glsl` file
 - [ ] Monaco editor with GLSL syntax
 - [ ] Live recompile on edit
 - [ ] Gallery page with scene cards

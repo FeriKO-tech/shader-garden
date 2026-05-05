@@ -14,6 +14,12 @@ const SceneCanvas = dynamic(
   },
 );
 
-export function SceneCanvasMount({ className }: { className?: string }) {
-  return <SceneCanvas className={className} />;
+type SceneCanvasMountProps = {
+  className?: string;
+  vertexShader?: string;
+  fragmentShader?: string;
+};
+
+export function SceneCanvasMount({ className, vertexShader, fragmentShader }: SceneCanvasMountProps) {
+  return <SceneCanvas className={className} vertexShader={vertexShader} fragmentShader={fragmentShader} />;
 }
