@@ -25,11 +25,11 @@ Then open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-- `pnpm dev` — start dev server
-- `pnpm build` — production build
-- `pnpm start` — run production build
-- `pnpm lint` — Next.js ESLint
-- `pnpm typecheck` — `tsc --noEmit`
+- `pnpm dev` - start dev server
+- `pnpm build` - production build
+- `pnpm start` - run production build
+- `pnpm lint` - Next.js ESLint
+- `pnpm typecheck` - `tsc --noEmit`
 
 > All Next.js scripts go through `scripts/run-safe.mjs`, which transparently
 > falls back to a temp workspace when the project path contains characters
@@ -83,7 +83,7 @@ sliders / color pickers underneath the live playground. Built-in uniforms
 - [x] User accounts (Firebase Auth) + saved forks
 - [x] Likes and featured scenes (Firestore)
 
-## Firebase (optional — sign-in, saved forks, likes, featured)
+## Firebase (optional - sign-in, saved forks, likes, featured)
 
 If the `NEXT_PUBLIC_FIREBASE_*` env vars are missing, the site still works;
 the auth widget shows `auth: off`, the save-fork button and the like buttons
@@ -99,9 +99,9 @@ disappear, and the gallery falls back to a static featured list. To turn it on:
 
 ### Firestore layout
 
-- `forks/{autoId}` — `{ uid, slug, title, vertex, fragment, uniformValues, createdAt }`
-- `likes/{slug}_{uid}` — `{ uid, slug, createdAt }` (one doc per user × scene)
-- `featured/scenes` — `{ slugs: string[] }`; curators edit this doc in the console
+- `forks/{autoId}` - `{ uid, slug, title, vertex, fragment, uniformValues, createdAt }`
+- `likes/{slug}_{uid}` - `{ uid, slug, createdAt }` (one doc per user × scene)
+- `featured/scenes` - `{ slugs: string[] }`; curators edit this doc in the console
   to pin scenes to the top of the gallery.
 
 ### Security rules

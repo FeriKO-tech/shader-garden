@@ -26,7 +26,7 @@ export function TutorialPanel({ steps, activeIndex, onPrev, onNext, onClose }: T
         <h2 className="text-lg font-semibold text-ink">{step.title}</h2>
         {step.lineRange ? (
           <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-ink-faint">
-            {step.stage ?? 'fragment'}.glsl · lines {step.lineRange[0]}–{step.lineRange[1]}
+            {step.stage ?? 'fragment'}.glsl · lines {step.lineRange[0]}-{step.lineRange[1]}
           </span>
         ) : null}
       </header>

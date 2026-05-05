@@ -10,25 +10,25 @@ const tutorial: TutorialStep[] = [
   {
     title: 'Signed distance functions',
     body:
-      'Each shape returns the signed distance from a point in 3D to its surface — negative inside, positive outside, zero on the surface. Sphere is just radius minus length; box and torus do a bit more vector work but the idea is the same.',
+      'Each shape returns the signed distance from a point in 3D to its surface - negative inside, positive outside, zero on the surface. Sphere is just radius minus length; box and torus do a bit more vector work but the idea is the same.',
     lineRange: [14, 26],
   },
   {
     title: 'Smooth union',
     body:
-      '`opSmoothUnion` blends two SDFs with a soft k-radius blob instead of taking the hard min. The slider on the right (`u_smooth`) controls how mushy the merge is — drop it to 0 to see the original three solids.',
+      '`opSmoothUnion` blends two SDFs with a soft k-radius blob instead of taking the hard min. The slider on the right (`u_smooth`) controls how mushy the merge is - drop it to 0 to see the original three solids.',
     lineRange: [28, 31],
   },
   {
     title: 'The animated scene',
     body:
-      'The whole scene is one function: position the sphere, box, and torus over time, smooth-union them, and return the result. Changing this function changes what gets ray-marched — try multiplying `t` by larger numbers to speed up the dance.',
+      'The whole scene is one function: position the sphere, box, and torus over time, smooth-union them, and return the result. Changing this function changes what gets ray-marched - try multiplying `t` by larger numbers to speed up the dance.',
     lineRange: [39, 56],
   },
   {
     title: 'Surface normals via gradient',
     body:
-      'A surface normal is just the gradient of the SDF, approximated with a tiny finite-difference. Three samples on each axis, normalize, and you get the direction the surface is facing — needed for any kind of shading.',
+      'A surface normal is just the gradient of the SDF, approximated with a tiny finite-difference. Three samples on each axis, normalize, and you get the direction the surface is facing - needed for any kind of shading.',
     lineRange: [58, 65],
   },
   {

@@ -37,7 +37,7 @@ const tutorial: TutorialStep[] = [
   {
     title: 'Sparse star field',
     body:
-      'Take a high-frequency noise sample and raise it to a high power. Most pixels collapse to ~0, only the brightest spots survive — that\'s a cheap, convincing star field with no extra texture.',
+      'Take a high-frequency noise sample and raise it to a high power. Most pixels collapse to ~0, only the brightest spots survive - that\'s a cheap, convincing star field with no extra texture.',
     lineRange: [59, 59],
   },
   {
