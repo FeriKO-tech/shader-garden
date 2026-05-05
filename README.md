@@ -77,10 +77,45 @@ sliders / color pickers underneath the live playground. Built-in uniforms
 
 ### Stretch goals
 
-- [ ] User accounts (Firebase Auth)
+- [x] Export as standalone `.html` snippet
+- [x] Tutorial mode that walks through a shader line-by-line
+- [x] Record the live canvas as an animated GIF
+- [x] User accounts (Firebase Auth) + saved forks
 - [ ] Likes and featured scenes
-- [ ] Tutorial mode that walks through a shader line-by-line
-- [ ] Export as `<canvas>` snippet or animated GIF
+
+## Firebase (optional — sign-in + saved forks)
+
+If the `NEXT_PUBLIC_FIREBASE_*` env vars are missing, the site still works;
+the auth widget shows `auth: off` and the save-fork button simply never appears.
+To turn it on:
+
+1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com/).
+2. Enable **Authentication → Google** as a sign-in provider.
+3. Enable **Cloud Firestore** (pick *production mode*, we supply rules below).
+4. In **Project settings → Your apps**, register a Web app and copy the config.
+5. Copy `.env.example` to `.env.local` and fill in the six `NEXT_PUBLIC_FIREBASE_*`
+   values.
+6. Add your deploy domain to **Authentication → Settings → Authorized domains**.
+
+Minimal Firestore security rules (paste into **Firestore → Rules**):
+
+```text
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /forks/{fork} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if request.auth != null
+                            && resource.data.uid == request.auth.uid;
+    }
+  }
+}
+```
+
+For deployment, add the same `NEXT_PUBLIC_FIREBASE_*` entries in the Vercel
+project's **Environment variables** (Production + Preview).
 
 ## Deploy on Vercel
 

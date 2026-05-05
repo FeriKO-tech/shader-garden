@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+import { SiteHeader } from '@/components/Header/SiteHeader';
+import { AuthProvider } from '@/lib/auth';
+
 const siteUrl = 'https://shader-garden-bice.vercel.app';
 const description = 'Interactive WebGL shader gallery with a live GLSL editor.';
 
@@ -28,7 +31,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="min-h-screen antialiased">
+        <AuthProvider>
+          <SiteHeader />
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

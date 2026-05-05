@@ -9,6 +9,8 @@ import {
   SHARE_VERTEX_PARAM,
   encodeFragment,
 } from '@/lib/encode-share';
+import { useAuth } from '@/lib/auth';
+import { saveFork } from '@/lib/forks';
 import { recordCanvasToGif, triggerGifDownload } from '@/lib/record-gif';
 import { buildSnippetHtml } from '@/lib/snippet-export';
 import { defaultUniformValues } from '@/shaders/types';
@@ -57,6 +59,10 @@ export function LivePlayground({
   const recordAbortRef = useRef<AbortController | null>(null);
   const [recordState, setRecordState] = useState<{ phase: 'idle' | 'recording' | 'encoding' | 'error'; captured?: number; total?: number; message?: string }>({ phase: 'idle' });
 
+  const { user, available: authAvailable } = useAuth();
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const hasTutorial = !!tutorial && tutorial.length > 0;
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [tutorialIndex, setTutorialIndex] = useState(0);
@@ -87,8 +93,15 @@ export function LivePlayground({
   useEffect(() => {
     return () => {
       if (shareTimer.current) clearTimeout(shareTimer.current);
+      if (saveTimer.current) clearTimeout(saveTimer.current);
     };
   }, []);
+
+  function flashSaveState(state: 'saved' | 'error') {
+    setSaveState(state);
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => setSaveState('idle'), 1800);
+  }
 
   function flashShareState(state: ShareState) {
     setShareState(state);
@@ -177,6 +190,25 @@ export function LivePlayground({
       }
     } finally {
       recordAbortRef.current = null;
+    }
+  }
+
+  async function handleSaveFork() {
+    if (!user) return;
+    setSaveState('saving');
+    try {
+      await saveFork({
+        uid: user.uid,
+        slug,
+        title,
+        vertex,
+        fragment,
+        uniformValues,
+      });
+      flashSaveState('saved');
+    } catch (err) {
+      console.error('saveFork failed', err);
+      flashSaveState('error');
     }
   }
 
@@ -298,6 +330,31 @@ export function LivePlayground({
               >
                 {shareLabel[shareState]}
               </button>
+              {authAvailable && user ? (
+                <button
+                  type="button"
+                  onClick={handleSaveFork}
+                  disabled={saveState === 'saving'}
+                  title="Save this shader to your account"
+                  className={
+                    'rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.25em] transition ' +
+                    (saveState === 'error'
+                      ? 'border-rose-500/40 text-rose-200 hover:border-rose-400/70'
+                      : saveState === 'saved'
+                        ? 'border-emerald-400/60 bg-emerald-500/15 text-emerald-100'
+                        : 'border-white/10 text-ink-dim hover:border-accent/50 hover:text-ink') +
+                    ' disabled:cursor-progress disabled:opacity-60'
+                  }
+                >
+                  {saveState === 'saving'
+                    ? 'saving…'
+                    : saveState === 'saved'
+                      ? 'saved!'
+                      : saveState === 'error'
+                        ? 'save failed'
+                        : 'save fork'}
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={handleExport}
