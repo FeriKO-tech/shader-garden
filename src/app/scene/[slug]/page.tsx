@@ -62,6 +62,7 @@ export default function ScenePage({ params, searchParams }: ScenePageProps) {
 
       <LivePlayground
         slug={scene.slug}
+        title={scene.title}
         defaultVertex={scene.vertex}
         defaultFragment={scene.fragment}
         initialVertex={sharedVertex ?? undefined}

@@ -9,6 +9,7 @@ import {
   SHARE_VERTEX_PARAM,
   encodeFragment,
 } from '@/lib/encode-share';
+import { buildSnippetHtml } from '@/lib/snippet-export';
 import { defaultUniformValues } from '@/shaders/types';
 import type { UniformDef, UniformValues } from '@/shaders/types';
 
@@ -18,6 +19,7 @@ type ShaderStage = 'fragment' | 'vertex';
 
 type LivePlaygroundProps = {
   slug: string;
+  title: string;
   defaultVertex: string;
   defaultFragment: string;
   initialVertex?: string;
@@ -29,6 +31,7 @@ type ShareState = 'idle' | 'copied' | 'error';
 
 export function LivePlayground({
   slug,
+  title,
   defaultVertex,
   defaultFragment,
   initialVertex,
@@ -103,6 +106,29 @@ export function LivePlayground({
     }
   }
 
+  function handleExport() {
+    if (typeof window === 'undefined') return;
+
+    const html = buildSnippetHtml({
+      slug,
+      title,
+      vertex,
+      fragment,
+      uniformDefs,
+      uniformValues,
+    });
+
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const href = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = href;
+    anchor.download = `${slug}.html`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(href);
+  }
+
   const shareLabel: Record<ShareState, string> = {
     idle: isDirty ? 'share fork' : 'share',
     copied: 'copied!',
@@ -163,6 +189,14 @@ export function LivePlayground({
                 className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink-dim transition hover:border-accent/50 hover:text-ink"
               >
                 {shareLabel[shareState]}
+              </button>
+              <button
+                type="button"
+                onClick={handleExport}
+                className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink-dim transition hover:border-accent/50 hover:text-ink"
+                title="Download a self-contained .html embed of this shader"
+              >
+                export html
               </button>
               <button
                 type="button"
