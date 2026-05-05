@@ -8,8 +8,8 @@ Interactive WebGL shader gallery with a live GLSL editor.
 
 - **Next.js 14** (App Router)
 - **React Three Fiber** + **drei**
-- **GLSL** shaders (loaded as raw text)
-- **Monaco Editor** with GLSL syntax (planned)
+- **GLSL** shaders (loaded as raw text via `raw-loader`)
+- **Monaco Editor** with a custom GLSL Monarch grammar
 - **Tailwind CSS**
 
 ## Getting started
@@ -33,6 +33,35 @@ Then open [http://localhost:3000](http://localhost:3000).
 > falls back to a temp workspace when the project path contains characters
 > Next.js cannot handle (notably `#`). On clean paths it runs Next directly.
 
+## Built-in scenes
+
+| slug | summary |
+| --- | --- |
+| `plasma` | Classic sin-based plasma. Drag horizontally to warp. |
+| `clouds` | fBm noise drifting across a twilight sky. |
+| `fire` | Procedural flames climbing through a fire palette. |
+| `galaxy` | Spiral fBm with a hot core, a halo, and sparse stars. |
+| `voronoi` | Animated cell-noise. Move horizontally to zoom in. |
+| `raymarch` | Sphere / box / torus blended via SDF smooth-union. Drag to orbit. |
+| `hologram` | Concentric rings, grid, chromatic aberration, scanlines and flicker. |
+| `glitch` | Chromatic-aberrated scanlines with random tearing. |
+
+Each scene lives under `src/shaders/<slug>/` as `vertex.glsl`, `fragment.glsl`,
+and a `meta.ts` that can declare custom `uniforms` (sliders, color pickers).
+Add a new entry to `src/shaders/registry.ts` to make it appear in the gallery.
+
+## Authoring shaders
+
+The `meta.ts` file may export a `uniforms` array with these shapes:
+
+- `{ name, type: 'float', default, min?, max?, step?, label? }`
+- `{ name, type: 'vec2', default: [x, y], min?, max?, step?, label? }`
+- `{ name, type: 'color', default: [r, g, b], label? }` (each channel `0..1`)
+
+Declared uniforms are wired into the `<shaderMaterial>` and rendered as
+sliders / color pickers underneath the live playground. Built-in uniforms
+`u_time`, `u_resolution`, `u_mouse` are always provided.
+
 ## Roadmap
 
 - [x] Basic R3F canvas
@@ -41,6 +70,15 @@ Then open [http://localhost:3000](http://localhost:3000).
 - [x] Live recompile on edit
 - [x] Gallery page with scene cards
 - [x] Share via URL
+- [x] Declarative uniform controls (float / vec2 / color)
+- [x] Edit vertex shader alongside fragment
+
+### Stretch goals
+
+- [ ] User accounts (Firebase Auth)
+- [ ] Likes and featured scenes
+- [ ] Tutorial mode that walks through a shader line-by-line
+- [ ] Export as `<canvas>` snippet or animated GIF
 
 ## License
 
