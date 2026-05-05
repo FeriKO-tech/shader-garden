@@ -2,7 +2,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { LivePlayground } from '@/components/Playground/LivePlayground';
-import { SHARE_PARAM, decodeFragment } from '@/lib/encode-share';
+import {
+  SHARE_FRAGMENT_PARAM,
+  SHARE_VERTEX_PARAM,
+  decodeFragment,
+} from '@/lib/encode-share';
 import { getSceneBySlug, scenes } from '@/shaders/registry';
 
 type ScenePageProps = {
@@ -24,14 +28,21 @@ export function generateMetadata({ params }: ScenePageProps) {
   };
 }
 
+function pickToken(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export default function ScenePage({ params, searchParams }: ScenePageProps) {
   const scene = getSceneBySlug(params.slug);
   if (!scene) notFound();
 
-  const sharedRaw = searchParams[SHARE_PARAM];
-  const sharedToken = Array.isArray(sharedRaw) ? sharedRaw[0] : sharedRaw;
-  const sharedFragment = sharedToken ? decodeFragment(sharedToken) : null;
-  const isFork = Boolean(sharedFragment && sharedFragment !== scene.fragment);
+  const fragmentToken = pickToken(searchParams[SHARE_FRAGMENT_PARAM]);
+  const vertexToken = pickToken(searchParams[SHARE_VERTEX_PARAM]);
+  const sharedFragment = fragmentToken ? decodeFragment(fragmentToken) : null;
+  const sharedVertex = vertexToken ? decodeFragment(vertexToken) : null;
+  const isFork =
+    Boolean(sharedFragment && sharedFragment !== scene.fragment) ||
+    Boolean(sharedVertex && sharedVertex !== scene.vertex);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-10 px-6 py-12 lg:py-16">
@@ -51,8 +62,9 @@ export default function ScenePage({ params, searchParams }: ScenePageProps) {
 
       <LivePlayground
         slug={scene.slug}
-        vertex={scene.vertex}
+        defaultVertex={scene.vertex}
         defaultFragment={scene.fragment}
+        initialVertex={sharedVertex ?? undefined}
         initialFragment={sharedFragment ?? undefined}
         uniformDefs={scene.uniforms}
       />

@@ -43,4 +43,8 @@ export function decodeFragment(encoded: string): string | null {
   }
 }
 
-export const SHARE_PARAM = 'f';
+export const SHARE_FRAGMENT_PARAM = 'f';
+export const SHARE_VERTEX_PARAM = 'v';
+
+/** Backwards-compatible alias for previously-published share links. */
+export const SHARE_PARAM = SHARE_FRAGMENT_PARAM;
