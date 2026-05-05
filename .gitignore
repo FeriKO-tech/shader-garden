@@ -1,0 +1,32 @@
+# dependencies
+node_modules
+.pnp
+.pnp.*
+
+# next
+.next
+out
+
+# build artifacts
+dist
+build
+
+# misc
+.DS_Store
+*.pem
+*.tsbuildinfo
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# env
+.env
+.env.local
+.env.*.local
+
+# editor
+.vscode
+.idea

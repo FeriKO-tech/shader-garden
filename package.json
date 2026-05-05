@@ -1,0 +1,39 @@
+{
+  "name": "shader-garden",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Interactive WebGL shader gallery with live GLSL editor.",
+  "scripts": {
+    "dev": "node scripts/run-safe.mjs dev",
+    "dev:direct": "next dev",
+    "build": "node scripts/run-safe.mjs build",
+    "build:direct": "next build",
+    "start": "node scripts/run-safe.mjs start",
+    "start:direct": "next start",
+    "lint": "node scripts/run-safe.mjs lint",
+    "lint:direct": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "4.6.0",
+    "@react-three/drei": "9.114.0",
+    "@react-three/fiber": "8.17.10",
+    "next": "14.2.15",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "three": "0.169.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.16.10",
+    "@types/react": "18.3.11",
+    "@types/react-dom": "18.3.0",
+    "@types/three": "0.169.0",
+    "autoprefixer": "10.4.20",
+    "eslint": "8.57.1",
+    "eslint-config-next": "14.2.15",
+    "postcss": "8.4.47",
+    "raw-loader": "4.0.2",
+    "tailwindcss": "3.4.13",
+    "typescript": "5.6.2"
+  }
+}
