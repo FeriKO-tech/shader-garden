@@ -2,6 +2,8 @@
 
 Interactive WebGL shader gallery with a live GLSL editor.
 
+**Live demo: [shader-garden-bice.vercel.app](https://shader-garden-bice.vercel.app)**
+
 > A growing collection of shader scenes you can fork, tweak, and share. Mini-Shadertoy, simpler and friendlier.
 
 ## Tech stack
