@@ -1,5 +1,5 @@
-import { LivePlayground } from '@/components/Playground/LivePlayground';
-import { plasmaMeta } from '@/shaders/plasma/meta';
+import { SceneCard } from '@/components/SceneCard/SceneCard';
+import { scenes } from '@/shaders/registry';
 
 export default function HomePage() {
   return (
@@ -12,16 +12,20 @@ export default function HomePage() {
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ink-dim">
           A growing collection of GLSL scenes you can fork, tweak, and share. Built on Next.js, React Three Fiber, and Monaco.
         </p>
-        <p className="mt-2 max-w-2xl text-sm text-ink-faint">
-          Edit the fragment shader on the right — the canvas recompiles as you type.
-        </p>
       </section>
 
-      <LivePlayground
-        slug={plasmaMeta.slug}
-        vertex={plasmaMeta.vertex}
-        initialFragment={plasmaMeta.fragment}
-      />
+      <section>
+        <div className="mb-6 flex items-baseline justify-between">
+          <h2 className="font-mono text-sm uppercase tracking-[0.3em] text-ink-dim">Gallery</h2>
+          <span className="font-mono text-xs text-ink-faint">{scenes.length} scenes</span>
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {scenes.map((scene) => (
+            <SceneCard key={scene.slug} scene={scene} />
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

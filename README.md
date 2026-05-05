@@ -39,7 +39,7 @@ Then open [http://localhost:3000](http://localhost:3000).
 - [x] Load fragment shader from `.glsl` file
 - [x] Monaco editor with GLSL syntax
 - [x] Live recompile on edit
-- [ ] Gallery page with scene cards
+- [x] Gallery page with scene cards
 - [ ] Share via URL
 
 ## License
