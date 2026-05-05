@@ -37,7 +37,7 @@ Then open [http://localhost:3000](http://localhost:3000).
 
 - [x] Basic R3F canvas
 - [x] Load fragment shader from `.glsl` file
-- [ ] Monaco editor with GLSL syntax
+- [x] Monaco editor with GLSL syntax
 - [ ] Live recompile on edit
 - [ ] Gallery page with scene cards
 - [ ] Share via URL
