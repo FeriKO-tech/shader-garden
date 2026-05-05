@@ -80,6 +80,28 @@ sliders / color pickers underneath the live playground. Built-in uniforms
 - [ ] Tutorial mode that walks through a shader line-by-line
 - [ ] Export as `<canvas>` snippet or animated GIF
 
+## Deploy on Vercel
+
+The project ships with the standard Next.js layout and a `pnpm-lock.yaml`,
+so Vercel detects everything automatically.
+
+**Dashboard flow** (recommended):
+
+1. Visit [vercel.com/new](https://vercel.com/new) and import the GitHub repo.
+2. Leave **Framework**, **Build command**, and **Install command** at the
+   auto-detected values (`Next.js`, `pnpm run build`, `pnpm install`).
+3. Hit **Deploy**.
+
+**CLI flow**:
+
+```bash
+pnpm dlx vercel        # one-off preview deploy
+pnpm dlx vercel --prod # production
+```
+
+The `scripts/run-safe.mjs` wrapper is a no-op on Vercel because the build
+path there is clean of `#`, so the project builds with vanilla `next build`.
+
 ## License
 
 MIT

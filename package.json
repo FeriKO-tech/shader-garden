@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Interactive WebGL shader gallery with live GLSL editor.",
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "node scripts/run-safe.mjs dev",
     "dev:direct": "next dev",

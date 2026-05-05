@@ -7,6 +7,9 @@ node_modules
 .next
 out
 
+# vercel
+.vercel
+
 # build artifacts
 dist
 build
