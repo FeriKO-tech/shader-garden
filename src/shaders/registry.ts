@@ -1,6 +1,7 @@
 import { glitchMeta } from './glitch/meta';
 import { plasmaMeta } from './plasma/meta';
 import { voronoiMeta } from './voronoi/meta';
+import type { UniformDef } from './types';
 
 export type SceneMeta = {
   slug: string;
@@ -8,6 +9,7 @@ export type SceneMeta = {
   description: string;
   vertex: string;
   fragment: string;
+  uniforms?: UniformDef[];
 };
 
 export const scenes: SceneMeta[] = [plasmaMeta, voronoiMeta, glitchMeta];

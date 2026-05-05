@@ -18,6 +18,7 @@ export function SceneCard({ scene }: SceneCardProps) {
           className="h-full w-full"
           vertexShader={scene.vertex}
           fragmentShader={scene.fragment}
+          uniformDefs={scene.uniforms}
         />
       </div>
 

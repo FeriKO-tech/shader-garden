@@ -54,6 +54,7 @@ export default function ScenePage({ params, searchParams }: ScenePageProps) {
         vertex={scene.vertex}
         defaultFragment={scene.fragment}
         initialFragment={sharedFragment ?? undefined}
+        uniformDefs={scene.uniforms}
       />
     </main>
   );

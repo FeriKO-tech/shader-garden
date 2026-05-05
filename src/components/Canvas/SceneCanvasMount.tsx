@@ -2,6 +2,8 @@
 
 import dynamic from 'next/dynamic';
 
+import type { UniformDef, UniformValues } from '@/shaders/types';
+
 const SceneCanvas = dynamic(
   () => import('./SceneCanvas').then((m) => m.SceneCanvas),
   {
@@ -18,8 +20,10 @@ type SceneCanvasMountProps = {
   className?: string;
   vertexShader?: string;
   fragmentShader?: string;
+  uniformDefs?: UniformDef[];
+  uniformValues?: UniformValues;
 };
 
-export function SceneCanvasMount({ className, vertexShader, fragmentShader }: SceneCanvasMountProps) {
-  return <SceneCanvas className={className} vertexShader={vertexShader} fragmentShader={fragmentShader} />;
+export function SceneCanvasMount(props: SceneCanvasMountProps) {
+  return <SceneCanvas {...props} />;
 }
