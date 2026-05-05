@@ -104,6 +104,18 @@ disappear, and the gallery falls back to a static featured list. To turn it on:
 - `featured/scenes` - `{ slugs: string[] }`; curators edit this doc in the console
   to pin scenes to the top of the gallery.
 
+### Required composite index
+
+The `/my` page queries `forks` by `uid` ordered by `createdAt`, which needs a
+composite index. On the first visit you'll see an error with a one-click link
+to create it. Alternatively, see `firestore.indexes.json` in the repo root -
+you can deploy it via the Firebase CLI:
+
+```bash
+firebase firestore:indexes --project shader-garden ./firestore.indexes.json
+firebase deploy --only firestore:indexes
+```
+
 ### Security rules
 
 Paste into **Firestore → Rules**:
