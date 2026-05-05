@@ -1,5 +1,6 @@
 import { cloudsMeta } from './clouds/meta';
 import { fireMeta } from './fire/meta';
+import { galaxyMeta } from './galaxy/meta';
 import { glitchMeta } from './glitch/meta';
 import { plasmaMeta } from './plasma/meta';
 import { raymarchMeta } from './raymarch/meta';
@@ -19,6 +20,7 @@ export const scenes: SceneMeta[] = [
   plasmaMeta,
   cloudsMeta,
   fireMeta,
+  galaxyMeta,
   voronoiMeta,
   raymarchMeta,
   glitchMeta,
