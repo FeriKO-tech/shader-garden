@@ -11,8 +11,9 @@ import {
 } from '@/lib/encode-share';
 import { buildSnippetHtml } from '@/lib/snippet-export';
 import { defaultUniformValues } from '@/shaders/types';
-import type { UniformDef, UniformValues } from '@/shaders/types';
+import type { TutorialStep, UniformDef, UniformValues } from '@/shaders/types';
 
+import { TutorialPanel } from './TutorialPanel';
 import { UniformControls } from './UniformControls';
 
 type ShaderStage = 'fragment' | 'vertex';
@@ -25,6 +26,7 @@ type LivePlaygroundProps = {
   initialVertex?: string;
   initialFragment?: string;
   uniformDefs?: UniformDef[];
+  tutorial?: TutorialStep[];
 };
 
 type ShareState = 'idle' | 'copied' | 'error';
@@ -37,6 +39,7 @@ export function LivePlayground({
   initialVertex,
   initialFragment,
   uniformDefs,
+  tutorial,
 }: LivePlaygroundProps) {
   const [vertex, setVertex] = useState(initialVertex ?? defaultVertex);
   const [fragment, setFragment] = useState(initialFragment ?? defaultFragment);
@@ -48,6 +51,23 @@ export function LivePlayground({
   const [isPending, startTransition] = useTransition();
   const [shareState, setShareState] = useState<ShareState>('idle');
   const shareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const hasTutorial = !!tutorial && tutorial.length > 0;
+  const [tutorialOpen, setTutorialOpen] = useState(false);
+  const [tutorialIndex, setTutorialIndex] = useState(0);
+  const activeTutorialStep = hasTutorial && tutorialOpen ? tutorial![tutorialIndex] : undefined;
+
+  useEffect(() => {
+    if (!activeTutorialStep) return;
+    const targetStage: ShaderStage = activeTutorialStep.stage ?? 'fragment';
+    setActiveStage(targetStage);
+  }, [activeTutorialStep]);
+
+  const highlightRange =
+    activeTutorialStep &&
+    (activeTutorialStep.stage ?? 'fragment') === activeStage
+      ? activeTutorialStep.lineRange
+      : undefined;
 
   const compiledVertex = useDeferredValue(vertex);
   const compiledFragment = useDeferredValue(fragment);
@@ -104,6 +124,23 @@ export function LivePlayground({
     } catch {
       flashShareState('error');
     }
+  }
+
+  function handleTutorialToggle() {
+    setTutorialOpen((open) => {
+      const next = !open;
+      if (next) setTutorialIndex(0);
+      return next;
+    });
+  }
+
+  function handleTutorialPrev() {
+    setTutorialIndex((idx) => Math.max(0, idx - 1));
+  }
+
+  function handleTutorialNext() {
+    if (!tutorial) return;
+    setTutorialIndex((idx) => Math.min(tutorial.length - 1, idx + 1));
   }
 
   function handleExport() {
@@ -183,6 +220,20 @@ export function LivePlayground({
               >
                 {isCompiling ? 'compiling…' : 'live'}
               </span>
+              {hasTutorial ? (
+                <button
+                  type="button"
+                  onClick={handleTutorialToggle}
+                  className={
+                    'rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.25em] transition ' +
+                    (tutorialOpen
+                      ? 'border-accent/60 bg-accent/15 text-ink'
+                      : 'border-white/10 text-ink-dim hover:border-accent/50 hover:text-ink')
+                  }
+                >
+                  {tutorialOpen ? 'tutorial: on' : 'tutorial'}
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={handleShare}
@@ -214,10 +265,21 @@ export function LivePlayground({
               value={editorValue}
               onChange={handleEditorChange}
               className="h-full"
+              highlightRange={highlightRange}
             />
           </div>
         </div>
       </div>
+
+      {tutorialOpen && tutorial ? (
+        <TutorialPanel
+          steps={tutorial}
+          activeIndex={tutorialIndex}
+          onPrev={handleTutorialPrev}
+          onNext={handleTutorialNext}
+          onClose={() => setTutorialOpen(false)}
+        />
+      ) : null}
 
       {uniformDefs && uniformDefs.length > 0 ? (
         <UniformControls defs={uniformDefs} values={uniformValues} onChange={setUniformValues} />

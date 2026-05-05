@@ -19,3 +19,15 @@ body {
   color: #e7e8ee;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
+
+/* tutorial line highlight in Monaco */
+.sg-tutorial-line {
+  background: rgba(168, 85, 247, 0.16);
+  border-left: 2px solid rgba(168, 85, 247, 0.85);
+}
+
+.sg-tutorial-line-gutter {
+  background: rgba(168, 85, 247, 0.45);
+  width: 3px !important;
+  margin-left: 3px;
+}

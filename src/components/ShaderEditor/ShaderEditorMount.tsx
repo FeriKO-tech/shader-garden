@@ -17,6 +17,7 @@ type ShaderEditorMountProps = {
   readOnly?: boolean;
   className?: string;
   height?: number | string;
+  highlightRange?: [number, number];
 };
 
 export function ShaderEditorMount(props: ShaderEditorMountProps) {

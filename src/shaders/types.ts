@@ -37,3 +37,14 @@ export function defaultUniformValues(defs: UniformDef[] | undefined): UniformVal
   for (const def of defs) result[def.name] = def.default;
   return result;
 }
+
+export type TutorialStage = 'fragment' | 'vertex';
+
+export type TutorialStep = {
+  title: string;
+  body: string;
+  /** Default: 'fragment'. Tells the playground which editor tab to focus. */
+  stage?: TutorialStage;
+  /** 1-based, inclusive line range to highlight in the editor. */
+  lineRange?: [number, number];
+};

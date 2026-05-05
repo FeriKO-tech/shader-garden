@@ -68,6 +68,7 @@ export default function ScenePage({ params, searchParams }: ScenePageProps) {
         initialVertex={sharedVertex ?? undefined}
         initialFragment={sharedFragment ?? undefined}
         uniformDefs={scene.uniforms}
+        tutorial={scene.tutorial}
       />
     </main>
   );

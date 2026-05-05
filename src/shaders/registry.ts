@@ -6,7 +6,7 @@ import { hologramMeta } from './hologram/meta';
 import { plasmaMeta } from './plasma/meta';
 import { raymarchMeta } from './raymarch/meta';
 import { voronoiMeta } from './voronoi/meta';
-import type { UniformDef } from './types';
+import type { TutorialStep, UniformDef } from './types';
 
 export type SceneMeta = {
   slug: string;
@@ -15,6 +15,7 @@ export type SceneMeta = {
   vertex: string;
   fragment: string;
   uniforms?: UniformDef[];
+  tutorial?: TutorialStep[];
 };
 
 export const scenes: SceneMeta[] = [

@@ -1,9 +1,12 @@
 'use client';
 
 import Editor, { type OnMount } from '@monaco-editor/react';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { GLSL_LANGUAGE_ID, GLSL_THEME_ID, registerGlslLanguage } from './glsl-language';
+
+type MonacoEditorInstance = Parameters<OnMount>[0];
+type DecorationsCollection = ReturnType<MonacoEditorInstance['createDecorationsCollection']>;
 
 type ShaderEditorProps = {
   value: string;
@@ -11,13 +14,76 @@ type ShaderEditorProps = {
   readOnly?: boolean;
   className?: string;
   height?: number | string;
+  /** 1-based, inclusive. When set, the range is highlighted and revealed. */
+  highlightRange?: [number, number];
 };
 
-export function ShaderEditor({ value, onChange, readOnly = false, className, height = '100%' }: ShaderEditorProps) {
-  const handleMount = useCallback<OnMount>((_editor, monaco) => {
-    registerGlslLanguage(monaco);
-    monaco.editor.setTheme(GLSL_THEME_ID);
+export function ShaderEditor({
+  value,
+  onChange,
+  readOnly = false,
+  className,
+  height = '100%',
+  highlightRange,
+}: ShaderEditorProps) {
+  const editorRef = useRef<MonacoEditorInstance | null>(null);
+  const decorationCollectionRef = useRef<DecorationsCollection | null>(null);
+  const lastRangeRef = useRef<[number, number] | undefined>(highlightRange);
+
+  const applyHighlight = useCallback((range: [number, number] | undefined) => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    const collection = decorationCollectionRef.current;
+    if (!collection) return;
+
+    if (!range) {
+      collection.clear();
+      return;
+    }
+
+    const [start, end] = range;
+    const model = editor.getModel();
+    const lineCount = model?.getLineCount() ?? end;
+    const startLine = Math.max(1, Math.min(start, lineCount));
+    const endLine = Math.max(startLine, Math.min(end, lineCount));
+
+    collection.set([
+      {
+        range: {
+          startLineNumber: startLine,
+          startColumn: 1,
+          endLineNumber: endLine,
+          endColumn: 1,
+        },
+        options: {
+          isWholeLine: true,
+          className: 'sg-tutorial-line',
+          linesDecorationsClassName: 'sg-tutorial-line-gutter',
+        },
+      },
+    ]);
+
+    editor.revealLinesInCenterIfOutsideViewport(startLine, endLine, 0);
   }, []);
+
+  const handleMount = useCallback<OnMount>(
+    (editor, monaco) => {
+      registerGlslLanguage(monaco);
+      monaco.editor.setTheme(GLSL_THEME_ID);
+
+      editorRef.current = editor;
+      decorationCollectionRef.current = editor.createDecorationsCollection();
+
+      if (lastRangeRef.current) applyHighlight(lastRangeRef.current);
+    },
+    [applyHighlight],
+  );
+
+  useEffect(() => {
+    lastRangeRef.current = highlightRange;
+    applyHighlight(highlightRange);
+  }, [highlightRange, applyHighlight]);
 
   return (
     <div className={className}>
